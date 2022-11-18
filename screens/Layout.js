@@ -1,8 +1,18 @@
-import { View, StyleSheet } from "react-native";
-import React from "react";
+import { View, StyleSheet, Appearance, StatusBar } from "react-native";
+import React, { useEffect, useState } from "react";
 
 export default function Layout({ children }) {
-  return <View style={styles.container}>{children}</View>;
+  const [theme, setTheme] = useState(Appearance.getColorScheme());
+  useEffect(() => {
+    Appearance.addChangeListener(({ colorScheme }) => {
+      setTheme(colorScheme);
+    });
+  }, []);
+  return (
+    <View style={theme === "light" ? styles.lightContainer : styles.container}>
+      {children}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -12,5 +22,14 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: StatusBar.currentHeight,
+  },
+  lightContainer: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: StatusBar.currentHeight,
   },
 });

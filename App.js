@@ -1,10 +1,11 @@
-import React, { userEffect } from "react";
+import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Forgot from "./screens/Forgot";
+import { Appearance } from "react-native";
 //import { initializeApp } from "firebase/app"; //Authentication purpose
 //import { config } from "./firebaseconfig"; //Authentication purpose
 
