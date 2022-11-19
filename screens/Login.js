@@ -7,15 +7,35 @@ import Forminput from "../components/Forminput";
 import Formbutton from "../components/Formbutton";
 import Layout from "./Layout";
 import Register from "./Register";
+import Home from "./Home";
 import Forgot from "./Forgot";
-import { LinearGradient } from "expo-linear-gradient";
+// import { LinearGradient } from "expo-linear-gradient";
 
 // for Validation
-const login = (email, pass) => {
+const login = async (email, pass) => {
   if (!email || !pass) {
     alert("Please enter all the required fields!!");
   } else {
-    alert("finding result");
+    var goodResponse = false;
+    const rawResponse = await fetch(
+      "https://anmolstuteja.herokuapp.com/auth/signin",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: email, pass: pass }),
+      }
+    );
+
+    const content = await rawResponse.json();
+    if (!content.refreshToken) {
+      console.log("not allowed");
+    } else {
+      goodResponse = true;
+    }
+    return goodResponse;
   }
 };
 
@@ -64,7 +84,17 @@ export default function Login() {
               placeHolder="password"
             ></Forminput>
           </FormInputGroup>
-          <Formbutton text="LOGIN" onPress={() => login(email, pass)} />
+          <Formbutton
+            text="LOGIN"
+            onPress={async () => {
+              // console.log("goodResponse = ", login(email, pass));
+              if ((await login(email, pass)) == true) {
+                navigation.navigate(Home);
+              } else {
+                alert("invalid username password");
+              }
+            }}
+          />
           <View style={tailwind`justify-between  flex-row`}>
             <TouchableOpacity onPress={() => navigation.navigate(Register)}>
               <Text style={tailwind`text-neutral-500 text-sm`}>

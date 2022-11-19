@@ -9,13 +9,38 @@ import Layout from "./Layout";
 import Login from "./Login";
 // import { SafeAreaView } from "react-native";
 // for validation
-const register = (fname, lname, email, pass, mobile, refcode) => {
+const register = async (fname, lname, email, pass, mobile, refcode) => {
   if (!fname || !lname || !mobile || !refcode || !email || !pass) {
     alert("Please enter all the required fields!!");
-  } else if (pass.length <= 5) {
-    alert("Make your password atleast more then 5 characters long!");
+  } else if (pass.length <= 4) {
+    alert("Make your password atleast 5 characters long!");
   } else {
-    alert("submited");
+    var goodResponse = false;
+    const rawResponse = await fetch(
+      "https://anmolstuteja.herokuapp.com/auth/signup",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: fname + " " + lname,
+          username: email,
+          pass: pass,
+        }),
+      }
+    );
+
+    const content = await rawResponse.json();
+    if (content.status != "Success") {
+      alert(content.status);
+      console.log("Error ", content.status);
+    } else {
+      alert("account created");
+      goodResponse = true;
+    }
+    return goodResponse;
   }
 };
 // Form input group styling
@@ -92,7 +117,14 @@ export default function Register() {
           </FormInputGroup>
           <Formbutton
             text="SIGNUP"
-            onPress={() => register(fname, lname, email, pass, mobile, refcode)}
+            onPress={async () => {
+              if (
+                (await register(fname, lname, email, pass, mobile, refcode)) ==
+                true
+              ) {
+                navigation.navigate(Login);
+              }
+            }}
           />
           <TouchableOpacity onPress={() => navigation.navigate(Login)}>
             <Text style={tailwind`text-neutral-500 text-sm`}>
